@@ -23,6 +23,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => {
 	//toArray is called a "Cursor" in the API Docs, and it returns a promise
 	/* find() can be empty--finding all collecitons-- or can take an object to
 		narrow down the find */
+	//This is called 'Method Chaining'
 	db.collection('Todos').find({completed: true}).toArray().then((docs) => {
 		console.log(JSON.stringify(docs, undefined, 2));
 	}, (err) =>{
