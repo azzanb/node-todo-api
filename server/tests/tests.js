@@ -2,12 +2,18 @@ const expect = require('expect');
 const request = require('supertest');
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
-
+const {ObjectID} = require('mongodb');
 
 const todos = [
-	{text: '1st todo'},
-	{text: '2nd todo'},
-	{text: '3rd todo'},
+	{ _id: new ObjectID(), 
+		text: '1st todo'
+	},
+	{ _id: new ObjectID(), 
+		text: '2nd todo'
+	},
+	{ _id: new ObjectID(), 
+		text: '3rd todo'
+	}
 ];
 
 //configure database before running tests
@@ -63,6 +69,37 @@ describe('GET /todos', () => {
 			.expect((res) => {
 				expect(res.body.todos.length).toBe(3);
 			})
+			.end(done);
+	});
+});
+
+//toHexString() means turn the object into a string
+describe('GET /todos/:id', () => {
+	it('should return todo doc', (done) => {
+		request(app)
+			.get(`/todos/${todos[0]._id.toHexString()}`)
+			.expect(200)
+			.expect((res) => {
+				expect(res.body.todo.text).toBe(todos[0].text)
+			})
+			.end(done);
+	});
+
+	it('should return 404 if todo not found', (done) => {
+		//take objectid and make it a string to be used in the url
+		//this is a random object that's not connected to todos array
+		var hexId = new ObjectID().toHexString();
+
+		request(app)
+			.get(`/todos/${hexId}`)
+			.expect(404)
+			.end(done);
+	});
+
+	it('should return 404 for non-object ids', (done) => {
+		request(app)
+			.get('/todos/123asf')
+			.expect(404)
 			.end(done);
 	});
 });
