@@ -1,4 +1,4 @@
-//This file holds the model for all todos
+//This file holds the model for all todos 
 
 var mongoose = require('mongoose');
 

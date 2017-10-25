@@ -1,8 +1,9 @@
 'use strict';
 //this file is just for routes
-var express = require('express');
-var bodyParser = require('body-parser');
-var app = express();
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+const _ = require('lodash');
 
 app.use(bodyParser.json());
 
@@ -55,6 +56,7 @@ app.get('/todos/:id', (req, res) => {
 	});
 });
 
+//DELETE a todo
 app.delete('/todos/:id', (req, res) => {
 	var id = req.params.id
 
@@ -67,15 +69,28 @@ app.delete('/todos/:id', (req, res) => {
 			res.status(404).send();
 		}
 		res.send({todo});
-		console.log(todo);
 	}, (err) => {
 		res.send(400);
 	});
 });
 
+app.post('/users', (req, res) => {
+	var body = _.pick(req.body, ['email', 'password']);
+	var user = new User(body);
+
+	user.save().then((user) => {
+		res.send(user);
+	}).catch((err) => {
+		res.status(400).send(err);
+	});
+})
 
 
-app.listen(3000);
+
+
+app.listen(3000, () => {
+	console.log("Server served on port 3000");
+});
 
 module.exports = {app};
 
